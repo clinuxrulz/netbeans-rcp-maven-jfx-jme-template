@@ -22,7 +22,7 @@ public final class CS {
     private static class Node {
         public enum State { CLEAN, STALE, DIRTY }
         
-        private State state = State.CLEAN;
+        private State state = State.DIRTY;
         private boolean eager;
         private Set<Node> children;
         private Deque<Runnable> cleanups;
@@ -268,6 +268,7 @@ public final class CS {
         AtomicReference<A> valueRef = new AtomicReference<>(a);
 
         Node node = new Node(true);
+        node.state = Node.State.CLEAN;
         node.sinks = new HashSet<>();
 
         Accessor<A> accessor = () -> {
