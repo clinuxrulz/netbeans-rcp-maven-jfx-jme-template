@@ -1,3 +1,5 @@
+package com.psf.cursed_signals;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;

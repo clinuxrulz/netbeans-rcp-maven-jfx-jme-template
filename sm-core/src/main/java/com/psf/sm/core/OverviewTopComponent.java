@@ -4,6 +4,7 @@
  */
 package com.psf.sm.core;
 
+import com.psf.cursed_signals.CS;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -44,7 +45,18 @@ public final class OverviewTopComponent extends TopComponent {
         putClientProperty(TopComponent.PROP_DRAGGING_DISABLED, Boolean.TRUE);
         putClientProperty(TopComponent.PROP_MAXIMIZATION_DISABLED, Boolean.TRUE);
         putClientProperty(TopComponent.PROP_UNDOCKING_DISABLED, Boolean.TRUE);
-
+        var s = CS.createSignal(0);
+        btnPlus.addActionListener((e) -> s.set().accept(s.get().get() + 1));
+        btnMinus.addActionListener((e) -> s.set().accept(s.get().get() - 1));
+        CS.createRoot((dispose) -> {
+            var m = CS.<String>createMemo(() -> {
+                return "Value: " + s.get().get().toString();
+            });
+            CS.createEffect(() -> {
+                lblValue.setText(m.get());
+            });
+            return dispose;
+        });
     }
 
     /**
@@ -55,19 +67,46 @@ public final class OverviewTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lblValue = new javax.swing.JLabel();
+        btnPlus = new javax.swing.JButton();
+        btnMinus = new javax.swing.JButton();
+
+        org.openide.awt.Mnemonics.setLocalizedText(lblValue, org.openide.util.NbBundle.getMessage(OverviewTopComponent.class, "OverviewTopComponent.lblValue.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(btnPlus, org.openide.util.NbBundle.getMessage(OverviewTopComponent.class, "OverviewTopComponent.btnPlus.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(btnMinus, org.openide.util.NbBundle.getMessage(OverviewTopComponent.class, "OverviewTopComponent.btnMinus.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(82, 82, 82)
+                .addComponent(lblValue)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnMinus)
+                    .addComponent(btnPlus))
+                .addContainerGap(212, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(48, 48, 48)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblValue)
+                    .addComponent(btnPlus))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnMinus)
+                .addContainerGap(186, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnMinus;
+    private javax.swing.JButton btnPlus;
+    private javax.swing.JLabel lblValue;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {

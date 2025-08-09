@@ -121,7 +121,13 @@
             <groupId>org.jmonkeyengine</groupId>
             <artifactId>jme3-effects</artifactId>
             <version>3.8.1-stable</version>
-        </dependency> -->            
+        </dependency> -->
+        <dependency>
+            <groupId>com.psf</groupId>
+            <artifactId>cursed_signals</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
