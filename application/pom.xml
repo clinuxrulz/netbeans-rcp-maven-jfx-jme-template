@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.psf</groupId>
+        <artifactId>sm-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>sm-app</artifactId>
+    <packaging>nbm-application</packaging>
+
+    <name>sm-app</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <all.clusters>${project.build.directory}/${brandingToken}</all.clusters>
+        <jpms-flags>
+            -Djava.security.manager=allow
+            --add-opens=java.base/java.net=ALL-UNNAMED
+            <!-- add more "add opens" if needed -->
+        </jpms-flags>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.netbeans.cluster</groupId>
+            <artifactId>platform</artifactId>
+            <version>${netbeans.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sm-branding</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-nbjunit</artifactId>
+            <version>${netbeans.version}</version>
+            <scope>test</scope> <!-- beyond platform cluster, this often needs to be dropped down to compile/runtime, some other modules in IDE clusters depend on it -->
+        </dependency>
+        <!-- To use Jelly Tools in your functional tests, add or replace with:
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-netbeans-modules-jellytools-platform</artifactId>
+            <version>${netbeans.version}</version>
+            <scope>test</scope>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>com.psf</groupId>
+            <artifactId>sm-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.netbeans.utilities</groupId>
+                <artifactId>nbm-maven-plugin</artifactId>
+                <version>14.3</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>run-app</id>
+                        <goals>
+                            <goal>run-platform</goal>
+                        </goals>
+                        <configuration>
+                            <platform-run-params>
+                                --userdir ${project.build.directory}/userdir
+                                --branding sm
+                                --jdkhome /usr/lib/jvm/java-21-openjdk-amd64
+                                -J-Dnetbeans.logger.console=true
+                                -J-ea
+                                -J--add-opens=java.base/java.net=ALL-UNNAMED
+                            </platform-run-params>
+                            </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Permits NbModuleSuite to be run in integration-test phase: -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <argLine>${jpms-flags}</argLine>
+                    <systemPropertyVariables>
+                        <all.clusters>${all.clusters}</all.clusters>
+                        <branding.token>${brandingToken}</branding.token>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>deployment</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.netbeans.utilities</groupId>
+                        <artifactId>nbm-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>extra</id>
+                                <goals>
+                                    <goal>autoupdate</goal>
+                                    <goal>build-installers</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
